@@ -262,7 +262,8 @@ nav {
 .product-subtitle { font-size: 15px; color: var(--gray-600); margin-bottom: 16px; line-height: 1.6; }
 .product-subtitle strong { color: var(--black); }
 
-.scent-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.scent-row { display: none; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+@media (min-width: 900px) { .scent-row { display: flex; } }
 .scent-tag {
   font-size: 12px; color: var(--gray-600);
   border: 1px solid var(--gray-200); border-radius: 20px; padding: 4px 12px;
@@ -456,69 +457,8 @@ nav {
       </div>
     </div>
 
-    <!-- FAQ -->
-    <div class="section">
-      <div class="section-title">Frequently Asked Questions</div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">এই offer এ কী পাবো?</div>
-          <div class="faq-a">Club de Nuit Intense (30ml) কিনলে Versace Eros (30ml) সম্পূর্ণ বিনামূল্যে পাবেন। দুটো premium perfume, মাত্র ১,০৫০ টাকায়।</div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">এগুলো কি original নাকি inspired?</div>
-          <div class="faq-a">এগুলো inspired version — বিখ্যাত luxury brands এর inspiration এ তৈরি। Same scent, same feel — অনেক সাশ্রয়ী দামে। Swiss brand LUZI এর perfume oil দিয়ে তৈরি।</div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">Projection ও lasting কেমন?</div>
-          <div class="faq-a">Projection: ৪–৬ ফুট দূর থেকে ঘ্রাণ পাওয়া যাবে। Lasting: ৪–৫ ঘন্টা।<br><br>💡 Tip: Clothes এ ১২–১৫টি spray দিলে lasting ও projection অনেক ভালো হয়।</div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">Spray নাকি roll-on?</div>
-          <div class="faq-a">দুটোই spray bottle।</div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">30ml কতদিন চলবে?</div>
-          <div class="faq-a">প্রতিদিন ১২–১৫টি spray করলে ১–১.৫ মাস আরামে চলবে।</div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">Delivery charge ও সময়?</div>
-          <div class="faq-a">ঢাকার ভেতরে ৮০ টাকা, বাইরে ১৩০ টাকা। Order confirm হওয়ার পর ৪৮–৭২ ঘন্টায় পৌঁছে যাবে।</div>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div>
-          <div class="faq-q">Payment কিভাবে?</div>
-          <div class="faq-a">সম্পূর্ণ Cash on Delivery। Product হাতে পাওয়ার পর টাকা দেবেন — আগে কোনো payment নেই।</div>
-        </div>
-      </div>
-    </div>
-
     <!-- ORDER FORM -->
-    <div class="section" id="orderFormBlock" style="border-bottom:none; padding-bottom:60px;">
+    <div class="section" id="orderFormBlock">
       <div class="form-title">অর্ডার করুন</div>
       <div class="form-subtitle">নিচের তথ্য দিন — আমরা কল করে confirm করবো।</div>
 
@@ -569,6 +509,67 @@ nav {
       <div class="form-note">
         আমরা আপনাকে কল করে অর্ডারটি নিশ্চিত করবো।<br>
         We will call you to confirm before dispatch.
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section" style="border-bottom:none; padding-bottom:60px;">
+      <div class="section-title">Frequently Asked Questions</div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">এই offer এ কী পাবো?</div>
+          <div class="faq-a">Club de Nuit Intense (30ml) কিনলে Versace Eros (30ml) সম্পূর্ণ বিনামূল্যে পাবেন। দুটো premium perfume, মাত্র ১,০৫০ টাকায়।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">এগুলো কি original নাকি inspired?</div>
+          <div class="faq-a">এগুলো inspired version — বিশ্বখ্যাত luxury brands এর inspiration এ তৈরি। Same scent, same feel — তবে অনেক সাশ্রয়ী দামে।<br><br>আমরা শুধুমাত্র বিশ্বের সেরা fragrance companies — <strong>LUZI, Argeville, Firmenich এবং Givaudan</strong> — এর perfume oil ব্যবহার করি। এই কোম্পানিগুলো Chanel, Dior, Armani সহ বিশ্বের বড় বড় brands এর perfume তৈরিতেও raw material সরবরাহ করে।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Projection ও lasting কেমন?</div>
+          <div class="faq-a">Projection: ৪–৬ ফুট দূর থেকে ঘ্রাণ পাওয়া যাবে। Lasting: ৪–৫ ঘন্টা।<br><br>💡 Tip: Clothes এ ১২–১৫টি spray দিলে lasting ও projection অনেক ভালো হয়।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Spray নাকি roll-on?</div>
+          <div class="faq-a">দুটোই spray bottle।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">30ml কতদিন চলবে?</div>
+          <div class="faq-a">প্রতিদিন ১২–১৫টি spray করলে ১–১.৫ মাস আরামে চলবে।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Delivery charge ও সময়?</div>
+          <div class="faq-a">ঢাকার ভেতরে ৮০ টাকা, বাইরে ১৩০ টাকা। Order confirm হওয়ার পর ৪৮–৭২ ঘন্টায় পৌঁছে যাবে।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Payment কিভাবে?</div>
+          <div class="faq-a">সম্পূর্ণ Cash on Delivery। Product হাতে পাওয়ার পর টাকা দেবেন — আগে কোনো payment নেই।</div>
+        </div>
       </div>
     </div>
 
