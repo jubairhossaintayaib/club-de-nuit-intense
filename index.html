@@ -54,19 +54,18 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: var(--white); border-bottom: 1px solid var(--gray-200);
   height: var(--nav-h);
-  display: flex; align-items: center;
-  padding: 0 16px;
+  display: flex; align-items: center; padding: 0 20px;
 }
 .nav-inner {
-  width: 100%;
+  width: 100%; max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between;
 }
 .logo img { height: 20px; width: auto; display: block; }
-@media (min-width: 700px) { .logo img { height: 28px; } }
+@media (min-width: 900px) { .logo img { height: 28px; } }
 .nav-whatsapp {
   display: flex; align-items: center; gap: 7px;
   background: var(--green); color: #fff; text-decoration: none;
-  padding: 7px 14px; border-radius: 24px;
+  padding: 7px 16px; border-radius: 24px;
   font-size: 12px; font-weight: 500;
   transition: opacity 0.2s; white-space: nowrap;
 }
@@ -80,89 +79,136 @@ nav {
 /* ── PAGE ── */
 .page-body { padding-top: var(--nav-h); }
 
-/* ─────────────────────────────────
-   GALLERY
-───────────────────────────────── */
-.gallery-section { background: var(--gray-100); }
+/* ─────────────────────────────────────
+   PRODUCT LAYOUT — 2 col on desktop
+───────────────────────────────────── */
+.product-layout {
+  display: flex;
+  flex-direction: column; /* mobile: stacked */
+}
+@media (min-width: 900px) {
+  .product-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - var(--nav-h));
+  }
+}
 
-/* Mobile: big square + scrollable thumbnail strip */
-.gallery-featured {
-  width: 100%; aspect-ratio: 1 / 1;
+/* ── LEFT: Image Slider ── */
+.slider-col {
+  width: 100%;
   background: var(--gray-100);
-  position: relative; overflow: hidden; cursor: zoom-in;
 }
-.gallery-featured img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: top center; display: block;
-}
-.gallery-featured-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--gray-400); font-size: 13px; letter-spacing: 1px;
-}
-.gallery-expand-hint {
-  position: absolute; bottom: 12px; right: 12px;
-  background: rgba(255,255,255,0.88); border-radius: 20px;
-  padding: 5px 12px; font-size: 11px; color: var(--gray-600);
-  display: flex; align-items: center; gap: 5px; pointer-events: none;
+@media (min-width: 900px) {
+  .slider-col {
+    width: 50%;
+    position: sticky;
+    top: var(--nav-h);
+    height: calc(100vh - var(--nav-h));
+    overflow: hidden;
+  }
 }
 
-.gallery-strip {
-  display: flex; gap: 3px; padding: 3px;
-  overflow-x: auto; background: var(--gray-100);
-  scrollbar-width: none;
+/* Main slider viewport */
+.slider-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--gray-100);
 }
-.gallery-strip::-webkit-scrollbar { display: none; }
-.gallery-strip-thumb {
+@media (min-width: 900px) {
+  .slider-viewport {
+    aspect-ratio: unset;
+    height: calc(100vh - var(--nav-h) - 84px); /* leave room for thumbs */
+  }
+}
+
+.slider-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+.slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+}
+.slide img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  display: block;
+  user-select: none; -webkit-user-drag: none;
+}
+
+/* Prev / next arrows */
+.slider-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.88);
+  border: none; cursor: pointer; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--black);
+  transition: background 0.15s, opacity 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.slider-arrow:hover { background: #fff; }
+.slider-arrow.prev { left: 10px; }
+.slider-arrow.next { right: 10px; }
+.slider-arrow.hidden { opacity: 0; pointer-events: none; }
+
+/* Dot indicators */
+.slider-dots {
+  position: absolute; bottom: 12px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 6px;
+}
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.5); cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  border: none; padding: 0;
+}
+.dot.active { background: #fff; transform: scale(1.2); }
+
+/* Thumbnail strip */
+.slider-thumbs {
+  display: flex; gap: 4px; padding: 4px;
+  overflow-x: auto; background: var(--gray-100);
+  scrollbar-width: none; height: 80px;
+}
+.slider-thumbs::-webkit-scrollbar { display: none; }
+.slider-thumb {
   flex-shrink: 0; width: 72px; height: 72px;
   border-radius: 4px; overflow: hidden; cursor: pointer;
-  border: 2px solid transparent; transition: border-color 0.15s;
+  border: 2px solid transparent;
+  transition: border-color 0.15s; background: var(--gray-200);
 }
-.gallery-strip-thumb.active { border-color: var(--black); }
-.gallery-strip-thumb img {
+.slider-thumb.active { border-color: var(--black); }
+.slider-thumb img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: top center; display: block;
+  object-fit: cover; object-position: center top; display: block;
 }
 
-/* Desktop: tall masonry-ish grid */
-.gallery-desktop-grid { display: none; }
-@media (min-width: 800px) {
-  .gallery-featured, .gallery-strip { display: none; }
-  .gallery-desktop-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px; padding: 4px;
-    max-width: 960px; margin: 0 auto;
-  }
-  .gallery-desktop-thumb {
-    aspect-ratio: 3 / 4; overflow: hidden; cursor: pointer;
-    background: var(--gray-200); border-radius: 4px;
-    transition: opacity 0.15s;
-  }
-  .gallery-desktop-thumb:hover { opacity: 0.88; }
-  .gallery-desktop-thumb img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: top center; display: block;
-  }
-  .gallery-desktop-thumb:first-child { grid-row: span 2; aspect-ratio: auto; }
-}
-
-/* ── LIGHTBOX ── */
+/* Lightbox */
 .lightbox {
   display: none; position: fixed; inset: 0;
   background: rgba(0,0,0,0.95); z-index: 300;
   align-items: center; justify-content: center; flex-direction: column;
+  cursor: zoom-out;
 }
 .lightbox.open { display: flex; }
 .lightbox-img {
-  max-width: min(94vw, 440px); max-height: 88vh;
+  max-width: min(92vw, 480px); max-height: 88vh;
   object-fit: contain; border-radius: 6px;
-  animation: fadeUp 0.2s ease;
+  animation: fadeUp 0.2s ease; cursor: default;
 }
 @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .lightbox-close {
   position: absolute; top: 14px; right: 16px;
-  width: 38px; height: 38px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   background: rgba(255,255,255,0.12); border: none; cursor: pointer;
   color: #fff; font-size: 18px;
   display: flex; align-items: center; justify-content: center;
@@ -171,7 +217,7 @@ nav {
 .lightbox-close:hover { background: rgba(255,255,255,0.25); }
 .lightbox-nav { display: flex; gap: 14px; margin-top: 16px; }
 .lightbox-nav-btn {
-  width: 42px; height: 42px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: rgba(255,255,255,0.12); border: none; cursor: pointer;
   color: #fff; font-size: 22px;
   display: flex; align-items: center; justify-content: center;
@@ -180,19 +226,28 @@ nav {
 .lightbox-nav-btn:hover { background: rgba(255,255,255,0.28); }
 .lightbox-counter { color: rgba(255,255,255,0.4); font-size: 12px; letter-spacing: 1px; margin-top: 10px; }
 
-/* ─────────────────────────────────
-   PRODUCT INFO
-───────────────────────────────── */
-.product-info {
-  padding: 20px 16px 24px;
-  border-bottom: 1px solid var(--gray-200);
-  max-width: 680px; margin: 0 auto;
+/* ── RIGHT: Product Info + Content ── */
+.content-col {
+  width: 100%;
 }
-@media (min-width: 700px) { .product-info { padding: 28px 32px; } }
+@media (min-width: 900px) {
+  .content-col {
+    width: 50%;
+    border-left: 1px solid var(--gray-200);
+    overflow-y: auto;
+  }
+}
 
-.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+/* ── PRODUCT INFO ── */
+.product-info {
+  padding: 22px 20px 24px;
+  border-bottom: 1px solid var(--gray-200);
+}
+@media (min-width: 900px) { .product-info { padding: 32px 40px 28px; } }
+
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .badge {
-  font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
   border-radius: 4px; padding: 4px 10px;
 }
 .badge-sale { background: var(--black); color: var(--white); }
@@ -200,75 +255,73 @@ nav {
 
 .product-title {
   font-family: var(--serif);
-  font-size: clamp(26px, 6vw, 40px);
-  font-weight: 400; line-height: 1.15;
-  color: var(--black); margin-bottom: 4px;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 400; line-height: 1.1;
+  color: var(--black); margin-bottom: 5px;
 }
-.product-subtitle { font-size: 15px; color: var(--gray-600); margin-bottom: 14px; line-height: 1.6; }
+.product-subtitle { font-size: 15px; color: var(--gray-600); margin-bottom: 16px; line-height: 1.6; }
 .product-subtitle strong { color: var(--black); }
 
-.scent-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.scent-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
 .scent-tag {
-  font-size: 11px; color: var(--gray-600);
-  border: 1px solid var(--gray-200); border-radius: 20px;
-  padding: 3px 11px;
+  font-size: 12px; color: var(--gray-600);
+  border: 1px solid var(--gray-200); border-radius: 20px; padding: 4px 12px;
 }
 
-.divider-line { border: none; border-top: 1px solid var(--gray-200); margin: 0 0 16px; }
+.divider-line { border: none; border-top: 1px solid var(--gray-200); margin: 0 0 18px; }
 
-.price-row { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-.price-new { font-family: var(--serif); font-size: 38px; font-weight: 400; color: var(--black); line-height: 1; }
-.price-old { font-size: 18px; color: var(--gray-400); text-decoration: line-through; }
+.price-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.price-new { font-family: var(--serif); font-size: 40px; font-weight: 400; color: var(--black); line-height: 1; }
+.price-old { font-size: 19px; color: var(--gray-400); text-decoration: line-through; }
 .price-save {
-  font-size: 11px; color: var(--white);
-  background: var(--black); border-radius: 20px; padding: 2px 10px;
+  font-size: 12px; color: var(--white);
+  background: var(--black); border-radius: 20px; padding: 2px 11px;
 }
-.price-note { font-size: 12px; color: var(--gray-600); margin-bottom: 14px; }
+.price-note { font-size: 13px; color: var(--gray-600); margin-bottom: 16px; }
 
 .cod-badge {
   display: inline-flex; align-items: center; gap: 7px;
   background: #f0faf4; border: 1px solid #b6e2c8;
   color: #1a7a40; border-radius: 6px;
-  padding: 7px 14px; font-size: 13px; font-weight: 500; margin-bottom: 10px;
+  padding: 8px 16px; font-size: 14px; font-weight: 500; margin-bottom: 10px;
 }
-.cod-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+.cod-badge svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 .delivery-row { display: flex; gap: 7px; flex-wrap: wrap; }
 .delivery-pill {
-  font-size: 12px; color: var(--gray-600);
-  border: 1px solid var(--gray-200); border-radius: 20px; padding: 4px 12px;
+  font-size: 13px; color: var(--gray-600);
+  border: 1px solid var(--gray-200); border-radius: 20px; padding: 5px 14px;
 }
 
-/* ── CONTENT BLOCKS ── */
-.content-block {
-  max-width: 680px; margin: 0 auto;
-  padding: 28px 16px;
+/* ── CONTENT SECTIONS ── */
+.section {
+  padding: 28px 20px;
   border-bottom: 1px solid var(--gray-200);
 }
-@media (min-width: 700px) { .content-block { padding: 32px 32px; } }
+@media (min-width: 900px) { .section { padding: 32px 40px; } }
 
-.block-title {
+.section-title {
   font-family: var(--serif); font-size: 30px; font-weight: 300;
-  color: var(--black); margin-bottom: 18px;
+  color: var(--black); margin-bottom: 20px;
 }
 
-/* ── FAQ ── */
+/* FAQ */
 .faq-item {
   display: flex; gap: 12px; align-items: flex-start;
-  padding: 14px 0; border-bottom: 1px solid var(--gray-100);
+  padding: 15px 0; border-bottom: 1px solid var(--gray-100);
 }
 .faq-item:last-child { border-bottom: none; }
 .faq-check {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--green); flex-shrink: 0; margin-top: 3px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0; margin-top: 2px;
   display: flex; align-items: center; justify-content: center;
 }
 .faq-check svg { width: 10px; height: 10px; }
-.faq-q { font-size: 16px; font-weight: 500; color: var(--black); margin-bottom: 6px; line-height: 1.4; }
+.faq-q { font-size: 16px; font-weight: 500; color: var(--black); margin-bottom: 5px; line-height: 1.4; }
 .faq-a { font-size: 15px; color: var(--gray-600); line-height: 1.9; }
 
-/* ── ORDER FORM ── */
-.form-title { font-family: var(--serif); font-size: 28px; font-weight: 300; color: var(--black); margin-bottom: 4px; }
+/* ORDER FORM */
+.form-title { font-family: var(--serif); font-size: 30px; font-weight: 300; color: var(--black); margin-bottom: 4px; }
 .form-subtitle { font-size: 15px; color: var(--gray-600); margin-bottom: 22px; }
 
 .form-group { margin-bottom: 15px; }
@@ -285,7 +338,7 @@ nav {
 }
 .form-group input:focus, .form-group textarea:focus { border-color: var(--black); }
 .form-group input.error, .form-group textarea.error { border-color: #b94040; }
-.form-group textarea { resize: none; height: 76px; }
+.form-group textarea { resize: none; height: 80px; }
 
 .district-wrapper { position: relative; }
 .district-input-wrap { position: relative; }
@@ -308,15 +361,15 @@ nav {
 
 .order-total-box {
   background: var(--gray-100); border: 1px solid var(--gray-200);
-  border-radius: 10px; padding: 15px 17px; margin: 18px 0 13px;
+  border-radius: 10px; padding: 16px 18px; margin: 20px 0 14px;
 }
-.total-label { font-size: 11px; letter-spacing: 2px; color: var(--gray-600); text-transform: uppercase; margin-bottom: 11px; }
+.total-label { font-size: 11px; letter-spacing: 2px; color: var(--gray-600); text-transform: uppercase; margin-bottom: 12px; }
 .total-row { display: flex; justify-content: space-between; font-size: 15px; color: var(--gray-600); margin-bottom: 6px; }
 .total-row.main { color: var(--black); }
 .total-row.free-row { color: #1a7a40; font-weight: 500; }
 .total-divider { border: none; border-top: 1px solid var(--gray-200); margin: 10px 0; }
-.total-final { display: flex; justify-content: space-between; font-size: 16px; font-weight: 500; color: var(--black); }
-.total-final .amount { font-weight: 600; font-size: 17px; }
+.total-final { display: flex; justify-content: space-between; font-size: 16px; font-weight: 600; color: var(--black); }
+.total-final .amount { font-size: 17px; }
 .total-pending { font-size: 13px; color: var(--gray-400); font-style: italic; text-align: center; padding: 4px 0; }
 
 .confirm-btn {
@@ -329,32 +382,7 @@ nav {
 }
 .confirm-btn:hover { opacity: 0.8; }
 .confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.form-note { font-size: 13px; color: var(--gray-400); text-align: center; margin-top: 11px; line-height: 1.7; }
-
-/* ── REVIEWS ── */
-.review-sub { font-size: 12px; color: var(--gray-400); margin-bottom: 14px; }
-.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
-@media (min-width: 500px) { .reviews-grid { grid-template-columns: repeat(4, 1fr); } }
-@media (min-width: 700px) { .reviews-grid { grid-template-columns: repeat(5, 1fr); gap: 9px; } }
-.review-thumb {
-  aspect-ratio: 9/16; border-radius: 8px; overflow: hidden;
-  cursor: pointer; position: relative; background: var(--gray-100);
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.review-thumb:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.1); }
-.review-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.review-thumb-overlay {
-  position: absolute; inset: 0; background: rgba(0,0,0,0);
-  transition: background 0.15s; display: flex; align-items: center; justify-content: center;
-}
-.review-thumb:hover .review-thumb-overlay { background: rgba(0,0,0,0.15); }
-.review-zoom-icon {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: rgba(255,255,255,0.9);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; opacity: 0; transition: opacity 0.15s;
-}
-.review-thumb:hover .review-zoom-icon { opacity: 1; }
+.form-note { font-size: 13px; color: var(--gray-400); text-align: center; margin-top: 12px; line-height: 1.7; }
 
 .toast {
   position: fixed; bottom: 24px; left: 50%;
@@ -369,7 +397,6 @@ nav {
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-inner">
     <div class="logo"><img src="logo.png" alt="Celures"></div>
@@ -381,224 +408,297 @@ nav {
 </nav>
 
 <div class="page-body">
+<div class="product-layout">
 
-  <!-- GALLERY — full width, immediately below nav -->
-  <div class="gallery-section">
-    <!-- Mobile -->
-    <div class="gallery-featured" id="galleryFeatured" onclick="openGalleryLightbox(currentGallery)">
-      <div class="gallery-featured-placeholder" id="galleryPlaceholder">Loading photos…</div>
-      <div class="gallery-expand-hint">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-        Tap to expand
-      </div>
+  <!-- ── LEFT: IMAGE SLIDER ── -->
+  <div class="slider-col">
+    <div class="slider-viewport" id="sliderViewport">
+      <div class="slider-track" id="sliderTrack"></div>
+      <button class="slider-arrow prev hidden" id="prevBtn" onclick="slideBy(-1)">‹</button>
+      <button class="slider-arrow next hidden" id="nextBtn" onclick="slideBy(1)">›</button>
+      <div class="slider-dots" id="sliderDots"></div>
     </div>
-    <div class="gallery-strip" id="galleryStrip"></div>
-    <!-- Desktop -->
-    <div class="gallery-desktop-grid" id="galleryDesktopGrid"></div>
+    <div class="slider-thumbs" id="sliderThumbs"></div>
   </div>
 
-  <!-- PRODUCT INFO -->
-  <div class="product-info">
-    <div class="badge-row">
-      <span class="badge badge-sale">Limited Offer 🔥</span>
-      <span class="badge badge-free">🎁 FREE GIFT</span>
-    </div>
-    <h1 class="product-title">Club de Nuit Intense</h1>
-    <div class="product-subtitle">30ml · Inspired by Armaf &nbsp;·&nbsp; <strong>+ Versace Eros 30ml FREE</strong></div>
+  <!-- ── RIGHT: CONTENT ── -->
+  <div class="content-col">
 
-    <div class="scent-row">
-      <span class="scent-tag">Lemon</span>
-      <span class="scent-tag">Blackcurrant</span>
-      <span class="scent-tag">Birch</span>
-      <span class="scent-tag">Ambergris</span>
-      <span class="scent-tag">Smoky</span>
-    </div>
-
-    <hr class="divider-line">
-
-    <div class="price-row">
-      <div class="price-new">৳১,০৫০</div>
-      <div class="price-old">৳২,১০০</div>
-      <div class="price-save">৫০% off</div>
-    </div>
-    <div class="price-note">দুটো 30ml perfume — মাত্র একটার দামে।</div>
-
-    <div class="cod-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      Cash on Delivery — পণ্য পেয়ে টাকা দিন
-    </div>
-
-    <div class="delivery-row">
-      <div class="delivery-pill">🚚 ঢাকার ভেতরে ৳৮০</div>
-      <div class="delivery-pill">🚚 ঢাকার বাইরে ৳১৩০</div>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="content-block">
-    <div class="block-title">Frequently Asked Questions</div>
-
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">এই offer এ কী পাবো?</div>
-        <div class="faq-a">Club de Nuit Intense (30ml) কিনলে Versace Eros (30ml) সম্পূর্ণ বিনামূল্যে পাবেন। দুটো premium perfume, মাত্র ১,০৫০ টাকায়।</div>
+    <!-- Product Info -->
+    <div class="product-info">
+      <div class="badge-row">
+        <span class="badge badge-sale">Limited Offer 🔥</span>
+        <span class="badge badge-free">🎁 FREE GIFT</span>
+      </div>
+      <h1 class="product-title">Club de Nuit Intense</h1>
+      <div class="product-subtitle">30ml · Inspired by Armaf &nbsp;·&nbsp; <strong>+ Versace Eros 30ml FREE</strong></div>
+      <div class="scent-row">
+        <span class="scent-tag">Lemon</span>
+        <span class="scent-tag">Blackcurrant</span>
+        <span class="scent-tag">Birch</span>
+        <span class="scent-tag">Ambergris</span>
+        <span class="scent-tag">Smoky</span>
+      </div>
+      <hr class="divider-line">
+      <div class="price-row">
+        <div class="price-new">৳১,০৫০</div>
+        <div class="price-old">৳২,১০০</div>
+        <div class="price-save">৫০% off</div>
+      </div>
+      <div class="price-note">দুটো 30ml perfume — মাত্র একটার দামে।</div>
+      <div class="cod-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Cash on Delivery — পণ্য পেয়ে টাকা দিন
+      </div>
+      <div class="delivery-row">
+        <div class="delivery-pill">🚚 ঢাকার ভেতরে ৳৮০</div>
+        <div class="delivery-pill">🚚 ঢাকার বাইরে ৳১৩০</div>
       </div>
     </div>
 
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">এগুলো কি original নাকি inspired?</div>
-        <div class="faq-a">এগুলো inspired version — বিখ্যাত luxury brands এর inspiration এ তৈরি। Same scent, same feel — অনেক সাশ্রয়ী দামে। Swiss brand LUZI এর perfume oil দিয়ে তৈরি।</div>
-      </div>
-    </div>
+    <!-- FAQ -->
+    <div class="section">
+      <div class="section-title">Frequently Asked Questions</div>
 
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">Projection ও lasting কেমন?</div>
-        <div class="faq-a">Projection: ৪–৬ ফুট দূর থেকে ঘ্রাণ পাওয়া যাবে। Lasting: ৪–৫ ঘন্টা।<br><br>💡 Tip: Clothes এ ১২–১৫টি spray দিলে lasting ও projection অনেক ভালো হয়।</div>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">Spray নাকি roll-on?</div>
-        <div class="faq-a">দুটোই spray bottle।</div>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">30ml কতদিন চলবে?</div>
-        <div class="faq-a">প্রতিদিন ১২–১৫টি spray করলে ১–১.৫ মাস আরামে চলবে।</div>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">Delivery charge ও সময়?</div>
-        <div class="faq-a">ঢাকার ভেতরে ৮০ টাকা, বাইরে ১৩০ টাকা। Order confirm হওয়ার পর ৪৮–৭২ ঘন্টায় পৌঁছে যাবে।</div>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div>
-        <div class="faq-q">Payment কিভাবে?</div>
-        <div class="faq-a">সম্পূর্ণ Cash on Delivery। Product হাতে পাওয়ার পর টাকা দেবেন — আগে কোনো payment নেই।</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ORDER FORM -->
-  <div class="content-block" id="orderFormBlock">
-    <div class="form-title">অর্ডার করুন</div>
-    <div class="form-subtitle">নিচের তথ্য দিন — আমরা কল করে confirm করবো।</div>
-
-    <div class="form-group">
-      <label>Full Name — পুরো নাম</label>
-      <input type="text" id="fieldName" placeholder="আপনার নাম লিখুন" autocomplete="name">
-      <div class="error-msg" id="errName">Please enter your name.</div>
-    </div>
-
-    <div class="form-group">
-      <label>Phone Number — ফোন নম্বর</label>
-      <input type="tel" id="fieldPhone" placeholder="01XXXXXXXXX" autocomplete="tel" maxlength="11" inputmode="numeric">
-      <div class="error-msg" id="errPhone">Please enter a valid 11-digit number (01XXXXXXXXX).</div>
-    </div>
-
-    <div class="form-group">
-      <label>District — জেলা</label>
-      <div class="district-wrapper">
-        <div class="district-input-wrap">
-          <input type="text" id="districtInput" placeholder="জেলার নাম লিখুন..." autocomplete="off">
-          <span class="district-arrow">▾</span>
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">এই offer এ কী পাবো?</div>
+          <div class="faq-a">Club de Nuit Intense (30ml) কিনলে Versace Eros (30ml) সম্পূর্ণ বিনামূল্যে পাবেন। দুটো premium perfume, মাত্র ১,০৫০ টাকায়।</div>
         </div>
-        <div class="district-dropdown" id="districtDropdown"></div>
       </div>
-      <div class="error-msg" id="errDistrict">Please select your district.</div>
-    </div>
 
-    <div class="form-group">
-      <label>Full Address — পুরো ঠিকানা</label>
-      <textarea id="fieldAddress" placeholder="বাসা নম্বর, রোড, এলাকা, থানা..."></textarea>
-      <div class="error-msg" id="errAddress">Please enter your delivery address.</div>
-    </div>
-
-    <div class="order-total-box">
-      <div class="total-label">Order Summary</div>
-      <div class="total-row main"><span>Club de Nuit Intense (30ml)</span><span>Tk 1,050</span></div>
-      <div class="total-row free-row"><span>Versace Eros (30ml)</span><span>FREE 🎁</span></div>
-      <div class="total-row"><span>Delivery</span><span id="deliveryAmt">—</span></div>
-      <hr class="total-divider">
-      <div class="total-final" id="totalFinal" style="display:none">
-        <span>Total (Cash on Delivery)</span>
-        <span class="amount" id="totalAmt"></span>
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">এগুলো কি original নাকি inspired?</div>
+          <div class="faq-a">এগুলো inspired version — বিখ্যাত luxury brands এর inspiration এ তৈরি। Same scent, same feel — অনেক সাশ্রয়ী দামে। Swiss brand LUZI এর perfume oil দিয়ে তৈরি।</div>
+        </div>
       </div>
-      <div class="total-pending" id="totalPending">জেলা সিলেক্ট করলে মোট মূল্য দেখাবে</div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Projection ও lasting কেমন?</div>
+          <div class="faq-a">Projection: ৪–৬ ফুট দূর থেকে ঘ্রাণ পাওয়া যাবে। Lasting: ৪–৫ ঘন্টা।<br><br>💡 Tip: Clothes এ ১২–১৫টি spray দিলে lasting ও projection অনেক ভালো হয়।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Spray নাকি roll-on?</div>
+          <div class="faq-a">দুটোই spray bottle।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">30ml কতদিন চলবে?</div>
+          <div class="faq-a">প্রতিদিন ১২–১৫টি spray করলে ১–১.৫ মাস আরামে চলবে।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Delivery charge ও সময়?</div>
+          <div class="faq-a">ঢাকার ভেতরে ৮০ টাকা, বাইরে ১৩০ টাকা। Order confirm হওয়ার পর ৪৮–৭২ ঘন্টায় পৌঁছে যাবে।</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-check"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4.5,8.5 11,1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="faq-q">Payment কিভাবে?</div>
+          <div class="faq-a">সম্পূর্ণ Cash on Delivery। Product হাতে পাওয়ার পর টাকা দেবেন — আগে কোনো payment নেই।</div>
+        </div>
+      </div>
     </div>
 
-    <button class="confirm-btn" id="confirmBtn" onclick="submitOrder()">অর্ডার নিশ্চিত করুন →</button>
-    <div class="form-note">
-      আমরা আপনাকে কল করে অর্ডারটি নিশ্চিত করবো।<br>
-      We will call you to confirm before dispatch.
+    <!-- ORDER FORM -->
+    <div class="section" id="orderFormBlock" style="border-bottom:none; padding-bottom:60px;">
+      <div class="form-title">অর্ডার করুন</div>
+      <div class="form-subtitle">নিচের তথ্য দিন — আমরা কল করে confirm করবো।</div>
+
+      <div class="form-group">
+        <label>Full Name — পুরো নাম</label>
+        <input type="text" id="fieldName" placeholder="আপনার নাম লিখুন" autocomplete="name">
+        <div class="error-msg" id="errName">Please enter your name.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number — ফোন নম্বর</label>
+        <input type="tel" id="fieldPhone" placeholder="01XXXXXXXXX" autocomplete="tel" maxlength="11" inputmode="numeric">
+        <div class="error-msg" id="errPhone">Please enter a valid 11-digit number (01XXXXXXXXX).</div>
+      </div>
+
+      <div class="form-group">
+        <label>District — জেলা</label>
+        <div class="district-wrapper">
+          <div class="district-input-wrap">
+            <input type="text" id="districtInput" placeholder="জেলার নাম লিখুন..." autocomplete="off">
+            <span class="district-arrow">▾</span>
+          </div>
+          <div class="district-dropdown" id="districtDropdown"></div>
+        </div>
+        <div class="error-msg" id="errDistrict">Please select your district.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Full Address — পুরো ঠিকানা</label>
+        <textarea id="fieldAddress" placeholder="বাসা নম্বর, রোড, এলাকা, থানা..."></textarea>
+        <div class="error-msg" id="errAddress">Please enter your delivery address.</div>
+      </div>
+
+      <div class="order-total-box">
+        <div class="total-label">Order Summary</div>
+        <div class="total-row main"><span>Club de Nuit Intense (30ml)</span><span>Tk 1,050</span></div>
+        <div class="total-row free-row"><span>Versace Eros (30ml)</span><span>FREE 🎁</span></div>
+        <div class="total-row"><span>Delivery</span><span id="deliveryAmt">—</span></div>
+        <hr class="total-divider">
+        <div class="total-final" id="totalFinal" style="display:none">
+          <span>Total (Cash on Delivery)</span>
+          <span class="amount" id="totalAmt"></span>
+        </div>
+        <div class="total-pending" id="totalPending">জেলা সিলেক্ট করলে মোট মূল্য দেখাবে</div>
+      </div>
+
+      <button class="confirm-btn" id="confirmBtn" onclick="submitOrder()">অর্ডার নিশ্চিত করুন →</button>
+      <div class="form-note">
+        আমরা আপনাকে কল করে অর্ডারটি নিশ্চিত করবো।<br>
+        We will call you to confirm before dispatch.
+      </div>
     </div>
-  </div>
 
-  <!-- REVIEWS -->
-  <div class="content-block" style="border-bottom:none; padding-bottom:60px;">
-    <div class="block-title">Customer Reviews</div>
-    <div class="review-sub">Real messages from our customers 💬</div>
-    <div class="reviews-grid" id="reviewsGrid"></div>
-  </div>
+  </div><!-- end content-col -->
+</div><!-- end product-layout -->
+</div><!-- end page-body -->
 
-</div>
-
-<!-- GALLERY LIGHTBOX -->
-<div class="lightbox" id="galleryLightbox" onclick="closeLightboxOnBg(event,'galleryLightbox')">
-  <button class="lightbox-close" onclick="closeLightbox('galleryLightbox')">✕</button>
-  <img class="lightbox-img" id="galleryLightboxImg" src="" alt="Product">
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBg(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="Product">
   <div class="lightbox-nav">
-    <button class="lightbox-nav-btn" onclick="prevGallery()">‹</button>
-    <button class="lightbox-nav-btn" onclick="nextGallery()">›</button>
+    <button class="lightbox-nav-btn" onclick="lightboxNav(-1)">‹</button>
+    <button class="lightbox-nav-btn" onclick="lightboxNav(1)">›</button>
   </div>
-  <div class="lightbox-counter" id="galleryCounter"></div>
-</div>
-
-<!-- REVIEW LIGHTBOX -->
-<div class="lightbox" id="reviewLightbox" onclick="closeLightboxOnBg(event,'reviewLightbox')">
-  <button class="lightbox-close" onclick="closeLightbox('reviewLightbox')">✕</button>
-  <img class="lightbox-img" id="reviewLightboxImg" src="" alt="Review">
-  <div class="lightbox-nav">
-    <button class="lightbox-nav-btn" onclick="prevReview()">‹</button>
-    <button class="lightbox-nav-btn" onclick="nextReview()">›</button>
-  </div>
-  <div class="lightbox-counter" id="reviewCounter"></div>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Districts ──
+// ── IMAGE SLIDER ──
+// Name your images: images/gallery1.jpg, gallery2.jpg … gallery10.jpg
+const GALLERY_IMAGES = Array.from({length: 10}, (_, i) => `images/gallery${i+1}.jpg`);
+let slides = [], currentSlide = 0;
+
+function initSlider() {
+  const track  = document.getElementById('sliderTrack');
+  const dots   = document.getElementById('sliderDots');
+  const thumbs = document.getElementById('sliderThumbs');
+
+  GALLERY_IMAGES.forEach((src, i) => {
+    const probe = new Image();
+    probe.onload = () => {
+      slides.push(src);
+      slides.sort();
+
+      // Slide
+      const slide = document.createElement('div');
+      slide.className = 'slide';
+      slide.innerHTML = `<img src="${src}" alt="Product" onclick="openLightbox(${slides.indexOf(src)})">`;
+      track.appendChild(slide);
+
+      // Dot
+      const dot = document.createElement('button');
+      dot.className = 'dot' + (slides.length === 1 ? ' active' : '');
+      dot.onclick = () => goToSlide(slides.indexOf(src));
+      dots.appendChild(dot);
+
+      // Thumb
+      const thumb = document.createElement('div');
+      thumb.className = 'slider-thumb' + (slides.length === 1 ? ' active' : '');
+      thumb.innerHTML = `<img src="${src}" alt="">`;
+      thumb.onclick = () => goToSlide(slides.indexOf(src));
+      thumbs.appendChild(thumb);
+
+      updateArrows();
+    };
+    probe.src = src;
+  });
+}
+
+function goToSlide(idx) {
+  currentSlide = idx;
+  document.getElementById('sliderTrack').style.transform = `translateX(-${idx * 100}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  document.querySelectorAll('.slider-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+  updateArrows();
+}
+
+function slideBy(dir) { goToSlide(Math.max(0, Math.min(slides.length - 1, currentSlide + dir))); }
+
+function updateArrows() {
+  document.getElementById('prevBtn').classList.toggle('hidden', currentSlide === 0);
+  document.getElementById('nextBtn').classList.toggle('hidden', currentSlide === slides.length - 1);
+  if (slides.length > 1) {
+    document.getElementById('prevBtn').classList.remove('hidden');
+    document.getElementById('nextBtn').classList.remove('hidden');
+    if (currentSlide === 0) document.getElementById('prevBtn').classList.add('hidden');
+    if (currentSlide === slides.length - 1) document.getElementById('nextBtn').classList.add('hidden');
+  }
+}
+
+// Touch/swipe support
+let touchStartX = 0;
+document.getElementById('sliderViewport').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.getElementById('sliderViewport').addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 40) slideBy(diff > 0 ? 1 : -1);
+});
+
+initSlider();
+
+// ── LIGHTBOX ──
+function openLightbox(idx) {
+  currentSlide = idx;
+  document.getElementById('lightboxImg').src = slides[idx];
+  document.getElementById('lightboxCounter').textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
+function closeLightboxOnBg(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+function lightboxNav(dir) {
+  const idx = Math.max(0, Math.min(slides.length - 1, currentSlide + dir));
+  openLightbox(idx);
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lightboxNav(1);
+  if (e.key === 'ArrowLeft')  lightboxNav(-1);
+  if (e.key === 'Escape')     closeLightbox();
+});
+
+// ── DISTRICTS ──
 const DISTRICTS = ["Bagerhat","Bandarban","Barguna","Barishal","Bhola","Bogura","Brahmanbaria","Chandpur","Chattogram","Chuadanga","Cox's Bazar","Cumilla","Dhaka","Dinajpur","Faridpur","Feni","Gaibandha","Gazipur","Gopalganj","Habiganj","Jamalpur","Jashore","Jhalokati","Jhenaidah","Joypurhat","Khagrachhari","Khulna","Kishoreganj","Kurigram","Kushtia","Lakshmipur","Lalmonirhat","Madaripur","Magura","Manikganj","Meherpur","Moulvibazar","Munshiganj","Mymensingh","Naogaon","Narail","Narayanganj","Narsingdi","Natore","Netrokona","Nilphamari","Noakhali","Pabna","Panchagarh","Patuakhali","Pirojpur","Rajbari","Rajshahi","Rangamati","Rangpur","Satkhira","Shariatpur","Sherpur","Sirajganj","Sunamganj","Sylhet","Tangail","Thakurgaon"];
 let selectedDistrict = "";
 
 const districtInput    = document.getElementById('districtInput');
 const districtDropdown = document.getElementById('districtDropdown');
 
-districtInput.addEventListener('input', function () {
+districtInput.addEventListener('input', function() {
   selectedDistrict = "";
   const q = this.value.toLowerCase().trim();
   renderDistricts(q ? DISTRICTS.filter(d => d.toLowerCase().includes(q)) : DISTRICTS);
   districtDropdown.classList.add('open');
   updateTotal();
 });
-districtInput.addEventListener('focus', function () {
+districtInput.addEventListener('focus', function() {
   const q = this.value.toLowerCase().trim();
   renderDistricts(q ? DISTRICTS.filter(d => d.toLowerCase().includes(q)) : DISTRICTS);
   districtDropdown.classList.add('open');
@@ -625,10 +725,10 @@ function updateTotal() {
     return;
   }
   const delivery = selectedDistrict.toLowerCase() === 'dhaka' ? 80 : 130;
-  const total    = 1050 + delivery;
-  document.getElementById('deliveryAmt').textContent   = 'Tk ' + delivery;
-  document.getElementById('totalAmt').textContent      = 'Tk ' + total;
-  document.getElementById('totalFinal').style.display  = 'flex';
+  const total = 1050 + delivery;
+  document.getElementById('deliveryAmt').textContent    = 'Tk ' + delivery;
+  document.getElementById('totalAmt').textContent       = 'Tk ' + total;
+  document.getElementById('totalFinal').style.display   = 'flex';
   document.getElementById('totalPending').style.display = 'none';
 }
 
@@ -636,6 +736,7 @@ document.getElementById('fieldPhone').addEventListener('input', function() {
   this.value = this.value.replace(/[^0-9]/g,'').slice(0,11);
 });
 
+// ── SUBMIT ──
 function submitOrder() {
   let valid = true;
   const name    = document.getElementById('fieldName').value.trim();
@@ -667,128 +768,6 @@ function submitOrder() {
 }
 function showErr(fId, eId) { document.getElementById(fId).classList.add('error'); document.getElementById(eId).classList.add('show'); }
 function clearErr(fId, eId) { document.getElementById(fId).classList.remove('error'); document.getElementById(eId).classList.remove('show'); }
-
-// ── Gallery ──
-// Name your photos: images/gallery1.jpg, gallery2.jpg … up to gallery10.jpg
-const GALLERY_IMAGES = Array.from({length:10}, (_,i) => `images/gallery${i+1}.jpg`);
-let validGallery = [], currentGallery = 0;
-
-function initGallery() {
-  const strip       = document.getElementById('galleryStrip');
-  const desktopGrid = document.getElementById('galleryDesktopGrid');
-  const featured    = document.getElementById('galleryFeatured');
-  const placeholder = document.getElementById('galleryPlaceholder');
-  let featuredSet   = false;
-
-  GALLERY_IMAGES.forEach((src, i) => {
-    const probe = new Image();
-    probe.onload = () => {
-      const entry = { src, i };
-      validGallery.push(entry);
-      validGallery.sort((a,b) => a.i - b.i);
-
-      // Mobile featured — first image
-      if (!featuredSet) {
-        featuredSet = true;
-        placeholder.style.display = 'none';
-        const fi = document.createElement('img');
-        fi.src = src; fi.alt = 'Product';
-        featured.insertBefore(fi, featured.firstChild);
-      }
-
-      // Mobile strip thumb
-      const st = document.createElement('div');
-      st.className = 'gallery-strip-thumb' + (validGallery.length === 1 ? ' active' : '');
-      st.innerHTML = `<img src="${src}" alt="">`;
-      st.addEventListener('click', () => {
-        currentGallery = validGallery.findIndex(g => g.src === src);
-        setFeaturedImage(src);
-        document.querySelectorAll('.gallery-strip-thumb').forEach(t => t.classList.remove('active'));
-        st.classList.add('active');
-      });
-      strip.appendChild(st);
-
-      // Desktop grid thumb
-      const dt = document.createElement('div');
-      dt.className = 'gallery-desktop-thumb';
-      dt.innerHTML = `<img src="${src}" alt="">`;
-      dt.addEventListener('click', () => {
-        currentGallery = validGallery.findIndex(g => g.src === src);
-        openGalleryLightbox(currentGallery);
-      });
-      desktopGrid.appendChild(dt);
-    };
-    probe.src = src;
-  });
-}
-
-function setFeaturedImage(src) {
-  const fi = document.querySelector('#galleryFeatured img');
-  if (fi) fi.src = src;
-}
-
-initGallery();
-
-function openGalleryLightbox(idx) {
-  currentGallery = idx; updateGalleryImg();
-  document.getElementById('galleryLightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function updateGalleryImg() {
-  document.getElementById('galleryLightboxImg').src = validGallery[currentGallery].src;
-  document.getElementById('galleryCounter').textContent = (currentGallery+1)+' / '+validGallery.length;
-}
-function nextGallery() { currentGallery = (currentGallery+1) % validGallery.length; updateGalleryImg(); }
-function prevGallery() { currentGallery = (currentGallery-1+validGallery.length) % validGallery.length; updateGalleryImg(); }
-
-// ── Reviews ──
-const REVIEW_IMAGES = Array.from({length:20}, (_,i) => `reviews/review${i+1}.jpg`);
-let validReviews = [], currentReview = 0;
-
-function initReviews() {
-  const grid = document.getElementById('reviewsGrid');
-  REVIEW_IMAGES.forEach(src => {
-    const p = new Image();
-    p.onload = () => {
-      validReviews.push(src); validReviews.sort();
-      const thumb = document.createElement('div');
-      thumb.className = 'review-thumb';
-      thumb.innerHTML = `<img src="${src}" alt="Review"><div class="review-thumb-overlay"><div class="review-zoom-icon">🔍</div></div>`;
-      thumb.addEventListener('click', () => openReviewLightbox(validReviews.indexOf(src)));
-      grid.appendChild(thumb);
-    };
-    p.src = src;
-  });
-}
-initReviews();
-
-function openReviewLightbox(idx) {
-  currentReview = idx; updateReviewImg();
-  document.getElementById('reviewLightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function updateReviewImg() {
-  document.getElementById('reviewLightboxImg').src = validReviews[currentReview];
-  document.getElementById('reviewCounter').textContent = (currentReview+1)+' / '+validReviews.length;
-}
-function nextReview() { currentReview = (currentReview+1) % validReviews.length; updateReviewImg(); }
-function prevReview() { currentReview = (currentReview-1+validReviews.length) % validReviews.length; updateReviewImg(); }
-
-function closeLightbox(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
-function closeLightboxOnBg(e, id) { if (e.target === document.getElementById(id)) closeLightbox(id); }
-
-document.addEventListener('keydown', function(e) {
-  if (document.getElementById('galleryLightbox').classList.contains('open')) {
-    if (e.key==='ArrowRight') nextGallery();
-    if (e.key==='ArrowLeft')  prevGallery();
-    if (e.key==='Escape')     closeLightbox('galleryLightbox');
-  }
-  if (document.getElementById('reviewLightbox').classList.contains('open')) {
-    if (e.key==='ArrowRight') nextReview();
-    if (e.key==='ArrowLeft')  prevReview();
-    if (e.key==='Escape')     closeLightbox('reviewLightbox');
-  }
-});
 </script>
 </body>
 </html>
