@@ -81,11 +81,11 @@ nav {
 .page-body { padding-top: var(--nav-h); }
 
 /* ─────────────────────────────────────
-   PRODUCT LAYOUT — 2 col on desktop
+   LAYOUT
 ───────────────────────────────────── */
 .product-layout {
   display: flex;
-  flex-direction: column; /* mobile: stacked */
+  flex-direction: column;
 }
 @media (min-width: 900px) {
   .product-layout {
@@ -93,219 +93,79 @@ nav {
     align-items: flex-start;
     max-width: 1200px;
     margin: 0 auto;
-    min-height: calc(100vh - var(--nav-h));
   }
 }
 
-/* ── LEFT: Image Slider ── */
-.slider-col {
+/* ── LEFT COL (desktop) ── */
+.left-col {
   width: 100%;
-  background: var(--gray-100);
 }
 @media (min-width: 900px) {
-  .slider-col {
+  .left-col {
     width: 50%;
     position: sticky;
     top: var(--nav-h);
     height: calc(100vh - var(--nav-h));
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    border-right: 1px solid var(--gray-200);
   }
+  .left-col::-webkit-scrollbar { display: none; }
 }
 
-/* Main slider viewport */
-.slider-viewport {
-  position: relative;
+/* ── YouTube video — 1:1 square ── */
+.video-wrap {
   width: 100%;
   aspect-ratio: 1 / 1;
+  background: #000;
   overflow: hidden;
-  background: var(--gray-100);
-}
-@media (min-width: 900px) {
-  .slider-viewport {
-    aspect-ratio: unset;
-    height: calc(100vh - var(--nav-h) - 84px); /* leave room for thumbs */
-  }
-}
-
-.slider-track {
-  display: flex;
-  height: 100%;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform;
-}
-.slide {
-  flex-shrink: 0;
-  width: 100%;
-  height: 100%;
-}
-.slide img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center center;
-  display: block;
-  user-select: none; -webkit-user-drag: none;
-}
-.slide video {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center center;
-  display: block;
-}
-.slide-video-wrap {
-  width: 100%; height: 100%; position: relative;
-}
-.video-play-hint {
-  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.5); color: #fff;
-  font-size: 11px; letter-spacing: 1px;
-  padding: 5px 14px; border-radius: 20px;
-  pointer-events: none; white-space: nowrap;
-}
-.video-controls {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
-  padding: 24px 14px 12px;
-  z-index: 11; display: flex; flex-direction: column; gap: 8px;
-}
-.video-progress-wrap {
-  width: 100%; height: 18px; display: flex; align-items: center;
-  cursor: pointer; position: relative;
-}
-.video-progress-track {
-  width: 100%; height: 4px; background: rgba(255,255,255,0.3);
-  border-radius: 2px; position: relative;
-  transition: height 0.15s;
-}
-.video-progress-wrap:hover .video-progress-track,
-.video-progress-wrap.dragging .video-progress-track { height: 6px; }
-.video-progress-bar {
-  height: 100%; background: #fff; border-radius: 2px;
-  width: 0%; pointer-events: none; position: relative;
-}
-.video-progress-thumb {
-  position: absolute; right: -7px; top: 50%; transform: translateY(-50%);
-  width: 14px; height: 14px; border-radius: 50%;
-  background: #fff; pointer-events: none;
-  opacity: 0; transition: opacity 0.15s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
-}
-.video-progress-wrap:hover .video-progress-thumb,
-.video-progress-wrap.dragging .video-progress-thumb { opacity: 1; }
-.video-btn-row {
-  display: flex; align-items: center; gap: 12px;
-}
-.video-ctrl-btn {
-  background: none; border: none; color: #fff;
-  cursor: pointer; font-size: 20px; padding: 2px;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0.9; transition: opacity 0.15s; line-height: 1;
-}
-.video-ctrl-btn:hover { opacity: 1; }
-.video-time {
-  font-size: 12px; color: rgba(255,255,255,0.85);
-  font-family: var(--sans); margin-left: auto; letter-spacing: 0.3px;
-}
-
-/* Prev / next arrows */
-.slider-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(255,255,255,0.88);
-  border: none; cursor: pointer; z-index: 10;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; color: var(--black);
-  transition: background 0.15s, opacity 0.15s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-.slider-arrow:hover { background: #fff; }
-.slider-arrow.prev { left: 10px; }
-.slider-arrow.next { right: 10px; }
-.slider-arrow.hidden { opacity: 0; pointer-events: none; }
-
-/* Dot indicators */
-.slider-dots {
-  position: absolute; bottom: 12px; left: 0; right: 0;
-  display: flex; justify-content: center; gap: 6px;
-}
-.dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: rgba(255,255,255,0.5); cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-  border: none; padding: 0;
-}
-.dot.active { background: #fff; transform: scale(1.2); }
-
-/* Thumbnail strip */
-.slider-thumbs {
-  display: flex; gap: 4px; padding: 4px;
-  overflow-x: auto; background: var(--gray-100);
-  scrollbar-width: none; height: 80px;
-}
-.slider-thumbs::-webkit-scrollbar { display: none; }
-.slider-thumb {
-  flex-shrink: 0; width: 72px; height: 72px;
-  border-radius: 4px; overflow: hidden; cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color 0.15s; background: var(--gray-200);
-}
-.slider-thumb.active { border-color: var(--black); }
-.slider-thumb img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center center; display: block;
-}
-.slider-thumb-video {
-  width: 100%; height: 100%;
-  background: #111;
-  display: flex; align-items: center; justify-content: center;
   position: relative;
 }
-.slider-thumb-video::after {
-  content: '▶';
-  color: #fff; font-size: 18px;
+.video-wrap iframe {
+  /* Crop 16:9 into 1:1 by scaling up and centering */
   position: absolute;
+  top: 50%; left: 50%;
+  width: 177.78%; /* 16/9 ratio */
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border: none;
+  pointer-events: all;
 }
 
-/* Lightbox */
-.lightbox {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.95); z-index: 300;
-  align-items: center; justify-content: center; flex-direction: column;
-  cursor: zoom-out;
+/* Desktop: image grid below video in left col */
+.desktop-image-grid {
+  display: none;
 }
-.lightbox.open { display: flex; }
-.lightbox-img {
-  max-width: min(92vw, 480px); max-height: 88vh;
-  object-fit: contain; border-radius: 6px;
-  animation: fadeUp 0.2s ease; cursor: default;
+@media (min-width: 900px) {
+  .desktop-image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    padding: 3px;
+  }
+  .desktop-image-grid .grid-thumb {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--gray-100);
+    position: relative;
+  }
+  .desktop-image-grid .grid-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 0.2s;
+  }
+  .desktop-image-grid .grid-thumb:hover img { transform: scale(1.04); }
 }
-@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-.lightbox-close {
-  position: absolute; top: 14px; right: 16px;
-  width: 40px; height: 40px; border-radius: 50%;
-  background: rgba(255,255,255,0.12); border: none; cursor: pointer;
-  color: #fff; font-size: 18px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-}
-.lightbox-close:hover { background: rgba(255,255,255,0.25); }
-.lightbox-nav { display: flex; gap: 14px; margin-top: 16px; }
-.lightbox-nav-btn {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(255,255,255,0.12); border: none; cursor: pointer;
-  color: #fff; font-size: 22px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
-}
-.lightbox-nav-btn:hover { background: rgba(255,255,255,0.28); }
-.lightbox-counter { color: rgba(255,255,255,0.4); font-size: 12px; letter-spacing: 1px; margin-top: 10px; }
 
-/* ── RIGHT: Product Info + Content ── */
-.content-col {
+/* ── RIGHT COL ── */
+.right-col {
   width: 100%;
 }
 @media (min-width: 900px) {
-  .content-col {
+  .right-col {
     width: 50%;
-    border-left: 1px solid var(--gray-200);
-    overflow-y: auto;
   }
 }
 
@@ -363,6 +223,77 @@ nav {
 .delivery-pill {
   font-size: 13px; color: var(--gray-600);
   border: 1px solid var(--gray-200); border-radius: 20px; padding: 5px 14px;
+}
+
+/* ── MOBILE IMAGE GRID (2 rows × 3) ── */
+.mobile-image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  padding: 3px;
+  border-bottom: 1px solid var(--gray-200);
+}
+@media (min-width: 900px) { .mobile-image-grid { display: none; } }
+.grid-thumb {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--gray-100);
+  position: relative;
+}
+.grid-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.2s;
+}
+.grid-thumb:hover img { transform: scale(1.04); }
+
+/* ── IMAGE LIGHTBOX SLIDER ── */
+.img-lightbox {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.96); z-index: 300;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+.img-lightbox.open { display: flex; }
+.img-lightbox-viewport {
+  width: min(92vw, 480px);
+  aspect-ratio: 1 / 1;
+  position: relative; overflow: hidden;
+}
+.img-lightbox-track {
+  display: flex; height: 100%;
+  transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.img-lightbox-slide {
+  flex-shrink: 0; width: 100%; height: 100%;
+}
+.img-lightbox-slide img {
+  width: 100%; height: 100%;
+  object-fit: contain; display: block;
+}
+.img-lightbox-close {
+  position: absolute; top: 14px; right: 16px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); border: none; cursor: pointer;
+  color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s; z-index: 10;
+}
+.img-lightbox-close:hover { background: rgba(255,255,255,0.25); }
+.img-lightbox-nav {
+  display: flex; gap: 14px; margin-top: 16px;
+}
+.img-lightbox-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); border: none; cursor: pointer;
+  color: #fff; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.img-lightbox-btn:hover { background: rgba(255,255,255,0.28); }
+.img-lightbox-counter {
+  color: rgba(255,255,255,0.45); font-size: 12px;
+  letter-spacing: 1px; margin-top: 10px;
 }
 
 /* ── CONTENT SECTIONS ── */
@@ -482,19 +413,24 @@ nav {
 <div class="page-body">
 <div class="product-layout">
 
-  <!-- ── LEFT: IMAGE SLIDER ── -->
-  <div class="slider-col">
-    <div class="slider-viewport" id="sliderViewport">
-      <div class="slider-track" id="sliderTrack"></div>
-      <button class="slider-arrow prev hidden" id="prevBtn" onclick="slideBy(-1)">‹</button>
-      <button class="slider-arrow next hidden" id="nextBtn" onclick="slideBy(1)">›</button>
-      <div class="slider-dots" id="sliderDots"></div>
+  <!-- ── LEFT COL ── -->
+  <div class="left-col">
+
+    <!-- YouTube video 1:1 -->
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/vvlil0guKGc?autoplay=1&mute=1&loop=1&playlist=vvlil0guKGc&controls=1&rel=0"
+        title="Celures Club de Nuit Intense"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
     </div>
-    <div class="slider-thumbs" id="sliderThumbs"></div>
+
+    <!-- Desktop image grid (below video, left col) -->
+    <div class="desktop-image-grid" id="desktopImageGrid"></div>
+
   </div>
 
-  <!-- ── RIGHT: CONTENT ── -->
-  <div class="content-col">
+  <!-- ── RIGHT COL ── -->
+  <div class="right-col">
 
     <!-- Product Info -->
     <div class="product-info">
@@ -561,6 +497,12 @@ nav {
         <label>Full Address — পুরো ঠিকানা</label>
         <textarea id="fieldAddress" placeholder="বাসা নম্বর, রোড, এলাকা, থানা..."></textarea>
         <div class="error-msg" id="errAddress">Please enter your delivery address.</div>
+      </div>
+
+      <!-- Mobile image grid — before confirm button -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size:11px; letter-spacing:2px; color:var(--gray-600); text-transform:uppercase; margin-bottom:10px;">Product Photos</div>
+        <div class="mobile-image-grid" id="mobileImageGrid"></div>
       </div>
 
       <div class="order-total-box">
@@ -644,242 +586,100 @@ nav {
       </div>
     </div>
 
-  </div><!-- end content-col -->
+  </div><!-- end right-col -->
 </div><!-- end product-layout -->
 </div><!-- end page-body -->
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightboxOnBg(event)">
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <img class="lightbox-img" id="lightboxImg" src="" alt="Product">
-  <div class="lightbox-nav">
-    <button class="lightbox-nav-btn" onclick="lightboxNav(-1)">‹</button>
-    <button class="lightbox-nav-btn" onclick="lightboxNav(1)">›</button>
+<!-- IMAGE LIGHTBOX SLIDER -->
+<div class="img-lightbox" id="imgLightbox" onclick="closeLightboxOnBg(event)">
+  <button class="img-lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="img-lightbox-viewport">
+    <div class="img-lightbox-track" id="lightboxTrack"></div>
   </div>
-  <div class="lightbox-counter" id="lightboxCounter"></div>
+  <div class="img-lightbox-nav">
+    <button class="img-lightbox-btn" onclick="lightboxNav(-1)">‹</button>
+    <button class="img-lightbox-btn" onclick="lightboxNav(1)">›</button>
+  </div>
+  <div class="img-lightbox-counter" id="lightboxCounter"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SLIDER ──
-const VIDEO_URL = 'https://assets.cdn.filesafe.space/HERNJnakevKQMPXCXIy7/media/69faa8f47167fd9a35a767c3.mp4';
-const GALLERY_IMAGES = Array.from({length: 10}, (_, i) => `images/gallery${i+1}.jpg`);
+// ── IMAGE GRID ──
+// Upload images as: images/gallery1.jpg … gallery6.jpg (6 images = 2 rows × 3)
+const GALLERY_IMAGES = Array.from({length: 6}, (_, i) => `images/gallery${i+1}.jpg`);
+let validImages = [], lightboxIdx = 0;
 
-// slides array: {type: 'video'|'image', src: '...'}
-let slides = [], currentSlide = 0;
+function initImageGrids() {
+  const mobileGrid  = document.getElementById('mobileImageGrid');
+  const desktopGrid = document.getElementById('desktopImageGrid');
+  const lbTrack     = document.getElementById('lightboxTrack');
 
-function initSlider() {
-  const track  = document.getElementById('sliderTrack');
-  const dots   = document.getElementById('sliderDots');
-  const thumbs = document.getElementById('sliderThumbs');
-
-  // ── Add video as FIRST slide ──
-  slides.push({ type: 'video', src: VIDEO_URL });
-
-  const videoSlide = document.createElement('div');
-  videoSlide.className = 'slide';
-  videoSlide.innerHTML = `
-    <div class="slide-video-wrap">
-      <video id="sliderVideo" src="${VIDEO_URL}" playsinline loop muted autoplay></video>
-      <div class="video-controls">
-        <div class="video-progress-wrap" id="videoProgressWrap">
-          <div class="video-progress-track">
-            <div class="video-progress-bar" id="videoProgressBar">
-              <div class="video-progress-thumb"></div>
-            </div>
-          </div>
-        </div>
-        <div class="video-btn-row">
-          <button class="video-ctrl-btn" id="playPauseBtn" onclick="togglePlay()">⏸</button>
-          <button class="video-ctrl-btn" onclick="seekBy(-10)">⏪</button>
-          <button class="video-ctrl-btn" onclick="seekBy(10)">⏩</button>
-          <button class="video-ctrl-btn" id="muteBtn" onclick="toggleMute()">🔇</button>
-          <span class="video-time" id="videoTime">0:00 / 0:00</span>
-        </div>
-      </div>
-    </div>`;
-  track.appendChild(videoSlide);
-
-  const videoDot = document.createElement('button');
-  videoDot.className = 'dot active';
-  videoDot.onclick = () => goToSlide(0);
-  dots.appendChild(videoDot);
-
-  const videoThumb = document.createElement('div');
-  videoThumb.className = 'slider-thumb active';
-  videoThumb.innerHTML = `<div class="slider-thumb-video"></div>`;
-  videoThumb.onclick = () => goToSlide(0);
-  thumbs.appendChild(videoThumb);
-
-  // ── Add images after video ──
-  let loaded = [];
-  GALLERY_IMAGES.forEach((src) => {
+  GALLERY_IMAGES.forEach((src, i) => {
     const probe = new Image();
     probe.onload = () => {
-      loaded.push(src);
-      loaded.sort();
-      const idx = slides.length; // position after video
-      slides.push({ type: 'image', src });
+      validImages.push(src);
 
-      const slide = document.createElement('div');
-      slide.className = 'slide';
-      const imgEl = document.createElement('img');
-      imgEl.src = src; imgEl.alt = 'Product';
-      imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center center;display:block;';
-      imgEl.onclick = () => openLightbox(slides.findIndex(s => s.src === src));
-      slide.appendChild(imgEl);
-      track.appendChild(slide);
+      // Add to lightbox track
+      const lbSlide = document.createElement('div');
+      lbSlide.className = 'img-lightbox-slide';
+      lbSlide.innerHTML = `<img src="${src}" alt="Product photo">`;
+      lbTrack.appendChild(lbSlide);
 
-      const dot = document.createElement('button');
-      dot.className = 'dot';
-      dot.onclick = () => goToSlide(slides.findIndex(s => s.src === src));
-      dots.appendChild(dot);
+      // Mobile grid thumb
+      const mThumb = document.createElement('div');
+      mThumb.className = 'grid-thumb';
+      mThumb.innerHTML = `<img src="${src}" alt="Product">`;
+      mThumb.onclick = () => openLightbox(validImages.indexOf(src));
+      mobileGrid.appendChild(mThumb);
 
-      const thumb = document.createElement('div');
-      thumb.className = 'slider-thumb';
-      thumb.innerHTML = `<img src="${src}" alt="">`;
-      thumb.onclick = () => goToSlide(slides.findIndex(s => s.src === src));
-      thumbs.appendChild(thumb);
-
-      updateArrows();
+      // Desktop grid thumb
+      const dThumb = document.createElement('div');
+      dThumb.className = 'grid-thumb';
+      dThumb.innerHTML = `<img src="${src}" alt="Product">`;
+      dThumb.onclick = () => openLightbox(validImages.indexOf(src));
+      desktopGrid.appendChild(dThumb);
     };
     probe.src = src;
   });
-
-  updateArrows();
 }
 
-function goToSlide(idx) {
-  const prev = currentSlide;
-  currentSlide = idx;
-  document.getElementById('sliderTrack').style.transform = `translateX(-${idx * 100}%)`;
-  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-  document.querySelectorAll('.slider-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+initImageGrids();
 
-  // Pause video when leaving, play when returning
-  const vid = document.getElementById('sliderVideo');
-  if (vid) {
-    if (idx === 0) vid.play();
-    else vid.pause();
-  }
-  updateArrows();
-}
-
-function slideBy(dir) { goToSlide(Math.max(0, Math.min(slides.length - 1, currentSlide + dir))); }
-
-function updateArrows() {
-  const prev = document.getElementById('prevBtn');
-  const next = document.getElementById('nextBtn');
-  prev.classList.toggle('hidden', currentSlide === 0);
-  next.classList.toggle('hidden', slides.length > 1 && currentSlide === slides.length - 1);
-  if (slides.length <= 1) next.classList.add('hidden');
-}
-
-// Touch/swipe
-let touchStartX = 0;
-document.getElementById('sliderViewport').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.getElementById('sliderViewport').addEventListener('touchend', e => {
-  const diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 40) slideBy(diff > 0 ? 1 : -1);
-});
-
-function togglePlay() {
-  const vid = document.getElementById('sliderVideo');
-  const btn = document.getElementById('playPauseBtn');
-  if (!vid) return;
-  if (vid.paused) { vid.play(); btn.textContent = '⏸'; }
-  else { vid.pause(); btn.textContent = '▶️'; }
-}
-
-function toggleMute() {
-  const vid = document.getElementById('sliderVideo');
-  const btn = document.getElementById('muteBtn');
-  if (!vid) return;
-  vid.muted = !vid.muted;
-  btn.textContent = vid.muted ? '🔇' : '🔊';
-}
-
-function seekBy(sec) {
-  const vid = document.getElementById('sliderVideo');
-  if (!vid) return;
-  vid.currentTime = Math.max(0, Math.min(vid.duration || 0, vid.currentTime + sec));
-}
-
-function formatTime(s) {
-  if (isNaN(s)) return '0:00';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m + ':' + String(sec).padStart(2, '0');
-}
-
-function initVideoProgress() {
-  const vid  = document.getElementById('sliderVideo');
-  const bar  = document.getElementById('videoProgressBar');
-  const wrap = document.getElementById('videoProgressWrap');
-  const time = document.getElementById('videoTime');
-  if (!vid || !bar || !wrap) return;
-
-  // Update on playback
-  vid.addEventListener('timeupdate', () => {
-    if (!vid.duration) return;
-    const pct = vid.currentTime / vid.duration * 100;
-    bar.style.width = pct + '%';
-    if (time) time.textContent = formatTime(vid.currentTime) + ' / ' + formatTime(vid.duration);
-  });
-
-  // Update mute button to reflect actual state
-  vid.addEventListener('volumechange', () => {
-    const btn = document.getElementById('muteBtn');
-    if (btn) btn.textContent = vid.muted ? '🔇' : '🔊';
-  });
-
-  // Draggable scrubber
-  let dragging = false;
-
-  function scrubTo(e) {
-    const rect = wrap.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    if (vid.duration) vid.currentTime = pct * vid.duration;
-  }
-
-  wrap.addEventListener('mousedown', e => { dragging = true; wrap.classList.add('dragging'); scrubTo(e); });
-  window.addEventListener('mousemove', e => { if (dragging) scrubTo(e); });
-  window.addEventListener('mouseup', () => { dragging = false; wrap.classList.remove('dragging'); });
-
-  wrap.addEventListener('touchstart', e => { dragging = true; wrap.classList.add('dragging'); scrubTo(e); }, { passive: true });
-  window.addEventListener('touchmove', e => { if (dragging) scrubTo(e); }, { passive: true });
-  window.addEventListener('touchend', () => { dragging = false; wrap.classList.remove('dragging'); });
-}
-
-setTimeout(initVideoProgress, 500);
-
-initSlider();
-
-// ── LIGHTBOX (images only) ──
+// ── LIGHTBOX ──
 function openLightbox(idx) {
-  if (slides[idx] && slides[idx].type === 'video') return; // skip video
-  currentSlide = idx;
-  document.getElementById('lightboxImg').src = slides[idx].src;
-  const imageSlides = slides.filter(s => s.type === 'image');
-  const imgIdx = imageSlides.findIndex(s => s.src === slides[idx].src);
-  document.getElementById('lightboxCounter').textContent = (imgIdx + 1) + ' / ' + imageSlides.length;
-  document.getElementById('lightbox').classList.add('open');
+  lightboxIdx = idx;
+  updateLightbox();
+  document.getElementById('imgLightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
-function closeLightboxOnBg(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+function closeLightbox() {
+  document.getElementById('imgLightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeLightboxOnBg(e) {
+  if (e.target === document.getElementById('imgLightbox')) closeLightbox();
+}
+function updateLightbox() {
+  document.getElementById('lightboxTrack').style.transform = `translateX(-${lightboxIdx * 100}%)`;
+  document.getElementById('lightboxCounter').textContent = (lightboxIdx + 1) + ' / ' + validImages.length;
+}
 function lightboxNav(dir) {
-  // navigate only among image slides
-  const imageIdxs = slides.map((s,i) => s.type === 'image' ? i : -1).filter(i => i >= 0);
-  const pos = imageIdxs.indexOf(currentSlide);
-  const newPos = Math.max(0, Math.min(imageIdxs.length - 1, pos + dir));
-  openLightbox(imageIdxs[newPos]);
+  lightboxIdx = Math.max(0, Math.min(validImages.length - 1, lightboxIdx + dir));
+  updateLightbox();
 }
 
+// Lightbox swipe
+let lbTouchX = 0;
+document.getElementById('imgLightbox').addEventListener('touchstart', e => { lbTouchX = e.touches[0].clientX; }, { passive: true });
+document.getElementById('imgLightbox').addEventListener('touchend', e => {
+  const diff = lbTouchX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 40) lightboxNav(diff > 0 ? 1 : -1);
+});
+
 document.addEventListener('keydown', e => {
-  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (!document.getElementById('imgLightbox').classList.contains('open')) return;
   if (e.key === 'ArrowRight') lightboxNav(1);
   if (e.key === 'ArrowLeft')  lightboxNav(-1);
   if (e.key === 'Escape')     closeLightbox();
@@ -937,7 +737,6 @@ document.getElementById('fieldPhone').addEventListener('input', function() {
   this.value = this.value.replace(/[^0-9]/g,'').slice(0,11);
 });
 
-// ── SUBMIT ──
 function submitOrder() {
   let valid = true;
   const name    = document.getElementById('fieldName').value.trim();
