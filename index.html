@@ -144,6 +144,21 @@ nav {
   display: block;
   user-select: none; -webkit-user-drag: none;
 }
+.slide video {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center center;
+  display: block;
+}
+.slide-video-wrap {
+  width: 100%; height: 100%; position: relative;
+}
+.video-play-hint {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.5); color: #fff;
+  font-size: 11px; letter-spacing: 1px;
+  padding: 5px 14px; border-radius: 20px;
+  pointer-events: none; white-space: nowrap;
+}
 
 /* Prev / next arrows */
 .slider-arrow {
@@ -191,6 +206,17 @@ nav {
 .slider-thumb img {
   width: 100%; height: 100%;
   object-fit: cover; object-position: center center; display: block;
+}
+.slider-thumb-video {
+  width: 100%; height: 100%;
+  background: #111;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.slider-thumb-video::after {
+  content: '▶';
+  color: #fff; font-size: 18px;
+  position: absolute;
 }
 
 /* Lightbox */
@@ -592,9 +618,11 @@ nav {
 <div class="toast" id="toast"></div>
 
 <script>
-// ── IMAGE SLIDER ──
-// Name your images: images/gallery1.jpg, gallery2.jpg … gallery10.jpg
+// ── SLIDER ──
+const VIDEO_URL = 'https://assets.cdn.filesafe.space/HERNJnakevKQMPXCXIy7/media/69faa8f47167fd9a35a767c3.mp4';
 const GALLERY_IMAGES = Array.from({length: 10}, (_, i) => `images/gallery${i+1}.jpg`);
+
+// slides array: {type: 'video'|'image', src: '...'}
 let slides = [], currentSlide = 0;
 
 function initSlider() {
@@ -602,59 +630,93 @@ function initSlider() {
   const dots   = document.getElementById('sliderDots');
   const thumbs = document.getElementById('sliderThumbs');
 
-  GALLERY_IMAGES.forEach((src, i) => {
+  // ── Add video as FIRST slide ──
+  slides.push({ type: 'video', src: VIDEO_URL });
+
+  const videoSlide = document.createElement('div');
+  videoSlide.className = 'slide';
+  videoSlide.innerHTML = `
+    <div class="slide-video-wrap">
+      <video id="sliderVideo" src="${VIDEO_URL}" playsinline loop muted autoplay></video>
+    </div>`;
+  track.appendChild(videoSlide);
+
+  const videoDot = document.createElement('button');
+  videoDot.className = 'dot active';
+  videoDot.onclick = () => goToSlide(0);
+  dots.appendChild(videoDot);
+
+  const videoThumb = document.createElement('div');
+  videoThumb.className = 'slider-thumb active';
+  videoThumb.innerHTML = `<div class="slider-thumb-video"></div>`;
+  videoThumb.onclick = () => goToSlide(0);
+  thumbs.appendChild(videoThumb);
+
+  // ── Add images after video ──
+  let loaded = [];
+  GALLERY_IMAGES.forEach((src) => {
     const probe = new Image();
     probe.onload = () => {
-      slides.push(src);
-      slides.sort();
+      loaded.push(src);
+      loaded.sort();
+      const idx = slides.length; // position after video
+      slides.push({ type: 'image', src });
 
-      // Slide
       const slide = document.createElement('div');
       slide.className = 'slide';
-      slide.innerHTML = `<img src="${src}" alt="Product" onclick="openLightbox(${slides.indexOf(src)})">`;
+      const imgEl = document.createElement('img');
+      imgEl.src = src; imgEl.alt = 'Product';
+      imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center center;display:block;';
+      imgEl.onclick = () => openLightbox(slides.findIndex(s => s.src === src));
+      slide.appendChild(imgEl);
       track.appendChild(slide);
 
-      // Dot
       const dot = document.createElement('button');
-      dot.className = 'dot' + (slides.length === 1 ? ' active' : '');
-      dot.onclick = () => goToSlide(slides.indexOf(src));
+      dot.className = 'dot';
+      dot.onclick = () => goToSlide(slides.findIndex(s => s.src === src));
       dots.appendChild(dot);
 
-      // Thumb
       const thumb = document.createElement('div');
-      thumb.className = 'slider-thumb' + (slides.length === 1 ? ' active' : '');
+      thumb.className = 'slider-thumb';
       thumb.innerHTML = `<img src="${src}" alt="">`;
-      thumb.onclick = () => goToSlide(slides.indexOf(src));
+      thumb.onclick = () => goToSlide(slides.findIndex(s => s.src === src));
       thumbs.appendChild(thumb);
 
       updateArrows();
     };
     probe.src = src;
   });
+
+  updateArrows();
 }
 
 function goToSlide(idx) {
+  const prev = currentSlide;
   currentSlide = idx;
   document.getElementById('sliderTrack').style.transform = `translateX(-${idx * 100}%)`;
   document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
   document.querySelectorAll('.slider-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+
+  // Pause video when leaving, play when returning
+  const vid = document.getElementById('sliderVideo');
+  if (vid) {
+    if (idx === 0) vid.play();
+    else vid.pause();
+  }
   updateArrows();
 }
 
 function slideBy(dir) { goToSlide(Math.max(0, Math.min(slides.length - 1, currentSlide + dir))); }
 
 function updateArrows() {
-  document.getElementById('prevBtn').classList.toggle('hidden', currentSlide === 0);
-  document.getElementById('nextBtn').classList.toggle('hidden', currentSlide === slides.length - 1);
-  if (slides.length > 1) {
-    document.getElementById('prevBtn').classList.remove('hidden');
-    document.getElementById('nextBtn').classList.remove('hidden');
-    if (currentSlide === 0) document.getElementById('prevBtn').classList.add('hidden');
-    if (currentSlide === slides.length - 1) document.getElementById('nextBtn').classList.add('hidden');
-  }
+  const prev = document.getElementById('prevBtn');
+  const next = document.getElementById('nextBtn');
+  prev.classList.toggle('hidden', currentSlide === 0);
+  next.classList.toggle('hidden', slides.length > 1 && currentSlide === slides.length - 1);
+  if (slides.length <= 1) next.classList.add('hidden');
 }
 
-// Touch/swipe support
+// Touch/swipe
 let touchStartX = 0;
 document.getElementById('sliderViewport').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
 document.getElementById('sliderViewport').addEventListener('touchend', e => {
@@ -664,19 +726,25 @@ document.getElementById('sliderViewport').addEventListener('touchend', e => {
 
 initSlider();
 
-// ── LIGHTBOX ──
+// ── LIGHTBOX (images only) ──
 function openLightbox(idx) {
+  if (slides[idx] && slides[idx].type === 'video') return; // skip video
   currentSlide = idx;
-  document.getElementById('lightboxImg').src = slides[idx];
-  document.getElementById('lightboxCounter').textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('lightboxImg').src = slides[idx].src;
+  const imageSlides = slides.filter(s => s.type === 'image');
+  const imgIdx = imageSlides.findIndex(s => s.src === slides[idx].src);
+  document.getElementById('lightboxCounter').textContent = (imgIdx + 1) + ' / ' + imageSlides.length;
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
 function closeLightboxOnBg(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
 function lightboxNav(dir) {
-  const idx = Math.max(0, Math.min(slides.length - 1, currentSlide + dir));
-  openLightbox(idx);
+  // navigate only among image slides
+  const imageIdxs = slides.map((s,i) => s.type === 'image' ? i : -1).filter(i => i >= 0);
+  const pos = imageIdxs.indexOf(currentSlide);
+  const newPos = Math.max(0, Math.min(imageIdxs.length - 1, pos + dir));
+  openLightbox(imageIdxs[newPos]);
 }
 
 document.addEventListener('keydown', e => {
