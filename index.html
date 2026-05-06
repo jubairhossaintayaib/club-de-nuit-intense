@@ -252,7 +252,7 @@ nav {
 }
 .img-lightbox.open { display: flex; }
 .img-lightbox-viewport {
-  width: min(92vw, 480px);
+  width: min(96vw, 600px);
   aspect-ratio: 1 / 1;
   position: relative; overflow: hidden;
 }
@@ -460,6 +460,11 @@ nav {
       </div>
     </div>
 
+    <!-- Mobile image grid — before order form -->
+    <div style="border-bottom: 1px solid var(--gray-200); padding: 4px 0;">
+      <div class="mobile-image-grid" id="mobileImageGrid"></div>
+    </div>
+
     <!-- ORDER FORM -->
     <div class="section" id="orderFormBlock">
       <div class="form-title">অর্ডার করুন</div>
@@ -493,12 +498,6 @@ nav {
         <label>Full Address — পুরো ঠিকানা</label>
         <textarea id="fieldAddress" placeholder="বাসা নম্বর, রোড, এলাকা, থানা..."></textarea>
         <div class="error-msg" id="errAddress">Please enter your delivery address.</div>
-      </div>
-
-      <!-- Mobile image grid — before confirm button -->
-      <div style="margin-bottom: 20px;">
-        <div style="font-size:11px; letter-spacing:2px; color:var(--gray-600); text-transform:uppercase; margin-bottom:10px;">Product Photos</div>
-        <div class="mobile-image-grid" id="mobileImageGrid"></div>
       </div>
 
       <div class="order-total-box">
