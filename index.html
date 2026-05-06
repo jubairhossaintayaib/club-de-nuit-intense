@@ -159,6 +159,25 @@ nav {
   padding: 5px 14px; border-radius: 20px;
   pointer-events: none; white-space: nowrap;
 }
+.video-unmute-btn {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  height: 42px; padding: 0 20px; border-radius: 30px;
+  background: rgba(0,0,0,0.62); border: 1.5px solid rgba(255,255,255,0.3);
+  cursor: pointer; color: #fff; font-size: 14px; font-family: var(--sans);
+  font-weight: 500; letter-spacing: 0.5px;
+  display: flex; align-items: center; gap: 8px;
+  z-index: 10; transition: background 0.15s; white-space: nowrap;
+}
+.video-unmute-btn:hover { background: rgba(0,0,0,0.85); }
+.video-progress-wrap {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px; background: rgba(255,255,255,0.25);
+  cursor: pointer; z-index: 10;
+}
+.video-progress-bar {
+  height: 100%; background: #fff; width: 0%;
+  pointer-events: none;
+}
 
 /* Prev / next arrows */
 .slider-arrow {
@@ -638,6 +657,10 @@ function initSlider() {
   videoSlide.innerHTML = `
     <div class="slide-video-wrap">
       <video id="sliderVideo" src="${VIDEO_URL}" playsinline loop muted autoplay></video>
+      <button class="video-unmute-btn" id="unmuteBtn" onclick="toggleMute()">🔇 Tap to unmute</button>
+      <div class="video-progress-wrap" id="videoProgressWrap">
+        <div class="video-progress-bar" id="videoProgressBar"></div>
+      </div>
     </div>`;
   track.appendChild(videoSlide);
 
@@ -723,6 +746,37 @@ document.getElementById('sliderViewport').addEventListener('touchend', e => {
   const diff = touchStartX - e.changedTouches[0].clientX;
   if (Math.abs(diff) > 40) slideBy(diff > 0 ? 1 : -1);
 });
+
+function toggleMute() {
+  const vid = document.getElementById('sliderVideo');
+  const btn = document.getElementById('unmuteBtn');
+  if (!vid) return;
+  vid.muted = !vid.muted;
+  btn.textContent = vid.muted ? '🔇 Tap to unmute' : '🔊 Mute';
+}
+
+// Progress bar update
+function initVideoProgress() {
+  const vid = document.getElementById('sliderVideo');
+  const bar = document.getElementById('videoProgressBar');
+  const wrap = document.getElementById('videoProgressWrap');
+  if (!vid || !bar || !wrap) return;
+
+  vid.addEventListener('timeupdate', () => {
+    if (!vid.duration) return;
+    bar.style.width = (vid.currentTime / vid.duration * 100) + '%';
+  });
+
+  wrap.addEventListener('click', e => {
+    if (!vid.duration) return;
+    const rect = wrap.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    vid.currentTime = pct * vid.duration;
+  });
+}
+
+// Call after slide is built
+setTimeout(initVideoProgress, 500);
 
 initSlider();
 
